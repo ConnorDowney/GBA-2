@@ -86,34 +86,79 @@ void draw7seg(uint8 num)
     }
 }
 
+void initRects()
+{
+    player.x = 0;
+    player.y = 0;
+    player.w = 8;
+    player.h = 32;
+
+    ball.w = 8;
+    ball.h = 8;
+    ball.x = SCREEN_WIDTH/2 - ball.w/2;
+    ball.y = SCREEN_HEIGHT/2 - ball.h/2;
+}
+
 int main()
 {
     REG_DISPLAY = VIDEOMODE | BGMODE;
 
     init7seg();
+    initRects();
 
     uint8 counter = 0;
     uint16 c = 0x001f;
+    uint16 ballColor = 0x0ff0;
+    uint16 playerColor = 0x7f00;
 
     uint8 down = 0;
+
+    int speedX = 1;
+    int speedY = 1;
 
     while(1)
     {
         sync();
         
-        if(!(REG_DISPLAY_INPUT & A) && !down)
+        drawRect(ball, 0x0000);
+        drawRect(player, 0x0000);
+
+        ball.x += speedX;
+        ball.y += speedY;
+
+        if(ball.x + ball.w == SCREEN_WIDTH || ball.x == 0)
         {
-            down = 1;
-            counter++;
-            if(counter>9)
+            speedX = -speedX;
+        }
+        if(ball.y + ball.h == SCREEN_HEIGHT || ball.y == 0)
+        {
+            speedY = -speedY;
+        }
+        if(!(REG_DISPLAY_INPUT & A))
+        {
+            player.y += 1;
+        }
+        if(!(REG_DISPLAY_INPUT & B))
+        {
+            player.y -= 1;
+        }
+        if(player.y < 0)
+        {
+            player.y = 0;
+        }
+        else if(player.y + player.h > SCREEN_HEIGHT)
+        {
+            player.y = SCREEN_HEIGHT - player.h;
+        }
+        if(ball.x == player.w)
+        {
+            if(ball.y < player.y + player.h && ball.y + ball.h > player.y)
             {
-                counter = 0;
+                speedX = -speedX;
             }
         }
-        else if(A & REG_DISPLAY_INPUT)
-        {
-            down = 0;
-        }
+        drawRect(player, playerColor);
+        drawRect(ball, ballColor);
 
         draw7seg(counter);
     }

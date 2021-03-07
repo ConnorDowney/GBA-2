@@ -31,4 +31,5 @@ typedef unsigned int    uint32;
 struct Rect 
 {
     int x, y, w, h;
-} a, b, c, d, e, f, g; 
+} a, b, c, d, e, f, g,
+ball, player; 
