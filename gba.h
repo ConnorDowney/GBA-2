@@ -32,4 +32,5 @@ struct Rect
 {
     int x, y, w, h;
 } a, b, c, d, e, f, g,
-ball, player; 
+a2, b2, c2, d2, e2, f2, g2,
+ball, player, player2;
